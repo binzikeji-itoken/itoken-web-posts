@@ -1,0 +1,163 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>我的商城 | 文章管理</title>
+    <th:block th:include="includes/head :: head"></th:block>
+</head>
+<th:block th:replace="includes/copyright :: modalCss"></th:block>
+<style>
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+
+    .el-upload__input {
+        display: none!important;
+    }
+</style>
+<body>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            文章管理
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li class="active">文章管理</li>
+            <li class="active" th:text="${tbPostsPost != null and tbPostsPost.postGuid != null ? '编辑文章' : '新增文章'}"></li>
+        </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <!--<div class="box-header">
+                        <h3 class="box-title" th:text="${tbPostsPost != null and tbPostsPost.postGuid != null ? '编辑文章' : '新增文章'}"></h3>
+                    </div>-->
+                    <div class="box-body">
+                        <div id="app">
+                            <el-form ref="form" :model="form" label-width="80px">
+                                <el-form-item label="标题">
+                                    <el-input v-model="form.title"></el-input>
+                                </el-form-item>
+                                <el-form-item label="封面缩略图片">
+                                    <el-input v-model="form.thumbImage" placeholder="封面缩略图片" readonly="readonly"></el-input>
+                                    <el-upload
+                                            class="avatar-uploader"
+                                            action="http://localhost:8505/upload"
+                                            :show-file-list="false"
+                                            :on-success="handleAvatarSuccess"
+                                            :before-upload="beforeAvatarUpload">
+                                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                                    </el-upload>
+                                </el-form-item>
+
+                                <el-form-item>
+                                    <el-button :plain="true" type="primary" @click="onSubmit">保存</el-button>
+                                    <el-button>取消</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<th:block th:include="includes/foot :: foot"></th:block>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                form: {
+                    title: '',
+                    thumbImage: ''
+                },
+                res: {},
+                imageUrl: ''
+            }
+        },
+        created() {
+        },
+        methods: {
+            onSubmit() {
+                var _this = this;
+                this.save("/save", "post", this.form).then(function (res) {
+                    var data = res.data;
+                    if (data != null){
+                        var success = data.success;
+                        if (success === '保存成功!') {
+                            _this.$message({
+                                message: data.success,
+                                type: 'success'
+                            });
+                            setTimeout(function () {
+                                window.location.href=data.data;
+                            },1000);
+                        } else {
+                            _this.$message.error(success);
+                        }
+                    } else {
+                        _this.$message.error("未知错误!")
+                    }
+                });
+            },
+            async save(url, methods, datas){
+                return new Promise(function (resolve, reject) {
+                    axios({
+                        url: url,
+                        method: methods,
+                        data: datas
+                    }).then(function (res) {
+                        resolve(res);
+                    }).catch(function (error) {
+                        reject(error);
+                    });
+                })
+            },
+            handleAvatarSuccess(res, file) {
+                if (res != null){
+                    this.imageUrl = res.fileName;
+                    this.form.thumbImage = res.fileName;
+                }
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            }
+        }
+    });
+</script>
+</body>
+</html>

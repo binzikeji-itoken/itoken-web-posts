@@ -1,0 +1,31 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>我的商城 | 文章列表</title>
+    <th:block th:include="includes/head :: head"></th:block>
+</head>
+<th:block th:replace="includes/copyright :: modalCss"></th:block>
+<link href="https://cdn.bootcss.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+<link th:href="@{{adminlte}/plugins/jquery-scrollbar/jquery.scrollbar.css(adminlte = ${adminlte})}" rel="stylesheet">
+<link th:href="@{{adminlte}/plugins/nth-tabs/css/nth.tabs.min.css(adminlte = ${adminlte})}" rel="stylesheet">
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <th:block th:include="includes/header :: header"></th:block>
+    <th:block th:include="includes/menu :: menu"></th:block>
+    <div class="content-wrapper">
+        <div class="nth-tabs common-bg" id="editor-tabs"></div>
+    </div>
+    <th:block th:include="includes/copyright :: copyright"></th:block>
+</div>
+
+<th:block th:include="includes/foot :: foot"></th:block>
+<script th:src="@{{adminlte}/plugins/jquery-scrollbar/jquery.scrollbar.min.js(adminlte = ${adminlte})}"></script>
+<script th:src="@{{adminlte}/plugins/nth-tabs/js/nth.tabs.min.js(adminlte = ${adminlte})}"></script>
+<script src="/assets/app/nth-tabs.js"></script>
+<script>
+    $(function () {
+        NthTabs.home("/index");
+    });
+</script>
+</body>
+</html>
